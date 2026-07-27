@@ -1,0 +1,131 @@
+aid: enmax
+url: https://raw.githubusercontent.com/api-evangelist/enmax/refs/heads/main/apis.yml
+name: ENMAX
+kind: company
+description: >-
+  ENMAX Corporation is the Calgary-based energy company owned outright by The
+  City of Calgary, describing itself on its own about page as "a regulated wires
+  company, a competitive power generator and an energy retailer" operating
+  "across Alberta and Maine." It spans three tiers of the value chain at once:
+  ENMAX Power owns and operates the regulated electricity distribution and
+  transmission system inside Calgary, ENMAX Energy generates power and sells
+  electricity and natural gas into Alberta's deregulated retail market under the
+  Easymax brand, and Versant Power — acquired from Emera in 2020 — is the
+  transmission and distribution utility for northern and eastern Maine. Its API
+  posture is the exact inverse of the Ontario utilities it is usually compared
+  to, and the inversion is the finding. No consumer energy data mandate binds
+  ENMAX anywhere it operates: Alberta has no Green Button regulation, Ontario's
+  O. Reg. 633/21 does not reach across the provincial border, Canada has no
+  national equivalent, and Maine imposes no Green Button obligation on Versant
+  Power. Unmandated, ENMAX built nothing — its own support documentation states
+  plainly that the Energy Insights usage view inside a customer's Easymax
+  account "is view-only within your online account and can't be exported at this
+  time," which is a harder closure than most: not merely no API, but no CSV, no
+  XML, and no Green Button either. There is no developer portal, no developer,
+  api, docs or data subdomain, no OpenAPI, and no published third-party data
+  path. What ENMAX does publish openly is grid data. Its Hosting Capacity, Load
+  Capacity and Service Area maps, linked from enmax.com/system-resources, are
+  ArcGIS Online web applications backed by ArcGIS REST feature services that
+  answer anonymous machine-readable queries with no key, no signup and no terms
+  — distribution-feeder DER hosting headroom and remaining load capacity for the
+  Calgary service territory, the data a solar or storage developer actually
+  needs. ENMAX never calls this an API and documents none of it, but it is real,
+  it is open, and it is queryable. Wide open on grid data, completely shut on
+  customer data.
+accessModel:
+  pricing: free
+  onboarding: none-published
+  trial: false
+  try_now: false
+  public: true
+  label: Free · No published developer program; open ArcGIS grid services are anonymous
+  confidence: high
+  source:
+  - documentation
+  - probing
+  generated: '2026-07-27'
+  method: manual
+image: https://www.enmax.com/favicon.ico
+tags:
+- Energy
+- Canada
+- Utilities
+- Electricity
+- Natural Gas
+- Grid
+- Smart Metering
+- Solar
+- DER
+- Geospatial
+- Alberta
+- Electricity Distribution
+created: '2026-07-27'
+modified: '2026-07-27'
+specificationVersion: '0.19'
+apis:
+- aid: enmax:enmax-power-system-capacity-arcgis-feature-services
+  name: ENMAX Power System Capacity ArcGIS Feature Services
+  description: >-
+    The machine-readable grid data behind ENMAX Power's public Hosting Capacity,
+    Load Capacity and Service Area maps. The three maps published at
+    enmax.com/system-resources are ArcGIS Online Web AppBuilder applications
+    hosted in the GeoARM ArcGIS Online organization, and their operational layers
+    resolve to ArcGIS REST feature services on services1.arcgis.com that answer
+    anonymous queries. Generation_Capacity_Layers_20250219_PUBLIC carries
+    estimated remaining DER hosting capacity by distribution feeder segment
+    (fields OBJECTID, FEEDERID, Description, Phase_Designation, Range,
+    Date_Last_Updated), Feeder_Load_Capacity_Rev9_20251211 carries estimated
+    remaining load capacity as of December 2025, and
+    ENMAX_Service_Area_for_LAF_Verification carries the distribution service
+    boundary. Verified anonymously on 2026-07-27: the service directory, each
+    FeatureServer metadata document, and a live /query returning attribute rows
+    all responded HTTP 200 with application/json and no credential of any kind.
+    This is genuinely open grid data — but it is open by consequence of Esri
+    hosting rather than by design. ENMAX publishes no developer portal, no API
+    reference, no OpenAPI, no rate limits, no terms of use and no versioning
+    policy for these endpoints, and never describes them as an API anywhere on
+    enmax.com. The service names are date-stamped and have already rolled from
+    Rev8 to Rev9, so the paths are not stable contracts. Treat as an
+    undocumented but real public data surface.
+  humanURL: https://www.enmax.com/system-resources
+  baseURL: https://services1.arcgis.com/NKgP4VcXUzEyOnmg/arcgis/rest/services
+  tags:
+  - Grid
+  - Hosting Capacity
+  - Load Capacity
+  - DER
+  - Solar
+  - Geospatial
+  - Open Data
+  - Electricity Distribution
+  properties:
+  - type: Documentation
+    url: https://www.enmax.com/system-resources
+  - type: Documentation
+    url: https://www.enmax.com/system-resources/hosting-capacity-map
+  - type: Documentation
+    url: https://www.enmax.com/system-resources/load-capacity-map
+  - type: Documentation
+    url: https://www.enmax.com/system-resources/service-area-map
+  - type: Website
+    url: https://services1.arcgis.com/NKgP4VcXUzEyOnmg/arcgis/rest/services?f=json
+common:
+- type: Website
+  url: https://www.enmax.com/
+- type: About
+  url: https://www.enmax.com/about-us
+- type: Blog
+  url: https://www.enmax.com/news
+- type: LinkedIn
+  url: https://www.linkedin.com/company/enmax
+- type: SignUp
+  url: https://myaccount.enmax.com/register
+- type: Login
+  url: https://myaccount.enmax.com/
+- type: Support
+  url: https://www.enmax.com/customer-support
+- type: Status
+  url: https://outages.enmax.com/
+maintainers:
+- FN: Kin Lane
+  email: kin@apievangelist.com

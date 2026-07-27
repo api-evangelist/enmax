@@ -1,0 +1,482 @@
+aid: enmax
+name: ENMAX
+review:
+  question: >-
+    Does ENMAX expose a real, verifiable consumer energy data API under any data
+    mandate, and does it publish any open grid or market data?
+  answer: >-
+    No consumer data API and no mandate compelling one — ENMAX's own support
+    documentation says the customer usage view "can't be exported at this time,"
+    so there is not even a CSV. But yes to open grid data: ENMAX Power's hosting
+    capacity, load capacity and service area layers are anonymously queryable
+    ArcGIS REST feature services, verified live. No developer portal exists and
+    no OpenAPI or any other machine-readable API contract was found anywhere.
+  date: '2026-07-27'
+  reviewer: API Evangelist
+  homeMarket: Canada
+  tier: utility-retailer
+  summary: |
+    ENMAX is the sharpest available control case for the sector's central
+    question. Ontario utilities in this same catalog (Toronto Hydro, Hydro One)
+    are bound by O. Reg. 633/21 and, under compulsion, built real Green Button
+    Download My Data and Connect My Data implementations. ENMAX sits one province
+    west in Alberta, under no equivalent obligation, and built nothing. The
+    difference is not capability, funding or scale — ENMAX runs an advanced
+    metering infrastructure program and holds the same interval data — it is
+    purely the presence or absence of a regulation. Where ENMAX did have a
+    business reason of its own, it published: distributed-energy developers need
+    to know where the distribution system has headroom, so the hosting capacity
+    and load capacity data is on the open web and machine-readable. Mandate
+    absent, consumer data closed. Commercial need present, grid data open.
+
+mandate:
+  regime: none
+  status: not-applicable
+  instrument: >-
+    None. No consumer energy data mandate applies to ENMAX in any jurisdiction it
+    operates in.
+  jurisdictionsChecked:
+    - jurisdiction: Alberta, Canada (ENMAX Power distribution, ENMAX Energy retail)
+      obligation: >-
+        None found. Green Button is not mandated in Alberta. The Alberta
+        Utilities Commission (AUC) regulates rates, reliability and billing, and
+        the Utilities Consumer Advocate handles consumer matters, but no Alberta
+        instrument requires a utility or retailer to expose customer usage data
+        through a standard API. Searched for an AUC Green Button or customer data
+        access requirement and found none; every Green Button regulatory result
+        returned was Ontario.
+    - jurisdiction: Ontario, Canada
+      obligation: >-
+        O. Reg. 633/21 (Energy Data) under the Electricity Act, 1998 requires
+        rate-regulated Ontario electricity and natural gas utilities to implement
+        Green Button DMD and CMD certified by the Green Button Alliance. It is a
+        province-level instrument and does NOT reach ENMAX, which is not an
+        Ontario local distribution company and has no Ontario service territory.
+        Recorded here only to make explicit that the mandate was checked and ruled
+        out on jurisdiction, not on the facts.
+    - jurisdiction: Canada (federal)
+      obligation: >-
+        None. Electricity is a provincial responsibility under the Canadian
+        constitution and there is no national energy consumer data right. Canada's
+        consumer-driven banking framework does not extend to energy.
+    - jurisdiction: Maine, USA (Versant Power subsidiary)
+      obligation: >-
+        None found. Maine imposes no Green Button obligation on Versant Power.
+        Probed https://www.versantpower.com/green-button — the server returns
+        HTTP 200 but the site is a JavaScript-rendered SPA that serves a byte
+        identical shell for every path (md5 of /green-button, /outages/ and an
+        invented /bogus-xyz-123 are all 6582a860cbc70864d55cf9fda661352f), and a
+        rendered fetch of that URL resolves to Versant Power's "Page Not Found"
+        page. There is no Green Button page.
+    - jurisdiction: Australia (CDR energy)
+      obligation: >-
+        Not applicable. ENMAX has no Australian operations and is not and could
+        not be a designated CDR energy data holder.
+  appliesToThisOrganization: false
+  greenButtonAllianceCertification: >-
+    None found for ENMAX, ENMAX Power, ENMAX Energy or Versant Power. Searched
+    for a Green Button Alliance certified-utility listing naming any ENMAX group
+    entity and found nothing. Absence of a certificate is consistent with the
+    absence of an obligation.
+  whatWasVerified:
+    - >-
+      No Green Button surface exists on enmax.com. https://www.enmax.com/green-button
+      and https://www.enmax.com/greenbutton both returned HTTP 404 (354,177 byte
+      Sitecore 404 page). The word Green Button appears nowhere in the 301-URL
+      sitemap at https://www.enmax.com/sitemap.xml (HTTP 200, 63,462 bytes).
+    - >-
+      ENMAX explicitly documents that customer usage data cannot be exported.
+      https://www.enmax.com/customer-support/for-my-home/what-is-energy-insights-for-easymax
+      (HTTP 200) carries the verbatim FAQ: "Can I download or export my usage
+      data? Energy Insights is view-only within your online account and can't be
+      exported at this time." The same page confirms the feature covers "up to
+      two years of billing history" as "interactive graphs" only. This is a
+      harder closure than a missing API — there is no CSV and no XML either.
+      NOTE - a third-party solar blog claims ENMAX customers can download hourly
+      usage as CSV or PDF from the portal. ENMAX's own current support page
+      contradicts that, and ENMAX's page is treated as authoritative here.
+    - >-
+      No meter-data download path is published either.
+      https://www.enmax.com/services/meter-services/meter-reading/electricity-usage-data
+      (HTTP 200) covers submitting readings TO ENMAX and notes only that for
+      commercial sites at 150 kVA or greater "interval readings are provided in
+      15 minute intervals through phone lines or wirelessly." No customer-facing
+      retrieval mechanism, no format, no third-party access.
+    - >-
+      The AMI program page says nothing about data access.
+      https://www.enmax.com/projects/advanced-metering-infrastructure-ami-program
+      (HTTP 200) states the meter shares "the meter number and the electricity
+      usage data" with ENMAX Power, encrypted in transit, and is silent on
+      customer access, downloads, APIs, Green Button or third-party sharing. The
+      metering infrastructure exists; the data right does not.
+    - >-
+      Open grid data IS real and anonymous. https://www.enmax.com/system-resources
+      (HTTP 200) links three ArcGIS Online Web AppBuilder maps on
+      geoarm.maps.arcgis.com. Their item data documents fetched anonymously
+      (HTTP 200 application/json) resolve to these ArcGIS REST feature services,
+      all reachable with no credential -
+      https://services1.arcgis.com/NKgP4VcXUzEyOnmg/arcgis/rest/services?f=json
+      (HTTP 200, 1,763 bytes, lists 9 FeatureServers);
+      .../Generation_Capacity_Layers_20250219_PUBLIC/FeatureServer?f=json
+      (HTTP 200, 9,229 bytes); .../Feeder_Load_Capacity_Rev9_20251211/FeatureServer?f=json
+      (HTTP 200, 10,979 bytes);
+      .../ENMAX_Service_Area_for_LAF_Verification/FeatureServer?f=json (HTTP 200,
+      4,361 bytes). A live anonymous query,
+      .../Generation_Capacity_Layers_20250219_PUBLIC/FeatureServer/1/query?where=1%3D1&outFields=*&returnGeometry=false&resultRecordCount=2&f=json,
+      returned HTTP 200 with real attribute rows - fields OBJECTID, FEEDERID,
+      Description, Phase_Designation, Range, Date_Last_Updated, Shape__Length and
+      values such as "Three Phase Primary Overhead" / "1,000 kW - 4,999 kW" /
+      "February 2025". This is ENMAX Power data - the ArcGIS item is titled
+      "ENMAX Hosting Capacity Map PUBLIC", access is "public", and its
+      description opens "ENMAX Power Corporation Load Capacity Map and Hosting
+      Capacity Map Explanation and Disclaimer".
+    - >-
+      There is no developer portal and no developer subdomain. developer.enmax.com,
+      developers.enmax.com, api.enmax.com, docs.enmax.com and data.enmax.com all
+      resolve to the same wildcard Cloudflare addresses (104.17.1.9, 104.17.2.9)
+      as www.enmax.com and every one of them returns HTTP 525 (SSL handshake
+      failed) - wildcard DNS with no origin behind it, not a portal.
+      https://www.enmax.com/developers, /developer, /api, /data and /open-data all
+      returned HTTP 404.
+    - >-
+      No machine-readable API contract of any kind exists on the domain.
+      https://www.enmax.com/openapi.json (404), /swagger.json (404),
+      /.well-known/openid-configuration (404), /.well-known/security.txt (404),
+      /.well-known/ai-plugin.json (404), /llms.txt (404).
+    - >-
+      "Developer" on enmax.com is a homonym trap. Every /helping-power-your-project
+      and /the-current URL containing "developer" - Developer Choice, developer
+      construct model, "engaging with the development community" - refers to LAND
+      and PROPERTY developers building subdivisions that need electrical service,
+      not software developers. Anything keying on the word alone will misclassify
+      this provider.
+  whatCouldNotBeVerified:
+    - >-
+      Whether anything inside myaccount.enmax.com exposes an export ENMAX has not
+      documented. https://myaccount.enmax.com/ returned HTTP 200 and is a customer
+      sign-in page; no account was created and nothing behind the login was
+      exercised. ENMAX's public FAQ is the only evidence and it says no export
+      exists.
+    - >-
+      The publication policy, licence, rate limits and stability guarantees for
+      the ArcGIS feature services. None are published. The service names are
+      date-stamped and have already rolled - Feeder_Load_Capacity_Rev8_20240731
+      is still present alongside Rev9_20251211 - so path stability should not be
+      assumed.
+    - >-
+      Whether the ArcGIS Online organization "GeoARM" (urlKey GeoARM, tenant
+      NKgP4VcXUzEyOnmg) is an ENMAX-owned tenant or a GIS contractor's. The item
+      owner is "Rgraydon_GeoARM". The layer names, the item titles and the
+      disclaimer text are unambiguously ENMAX Power's, and enmax.com links
+      directly to the apps, so the data provenance is certain even though the
+      hosting arrangement is not documented.
+
+dataStandard:
+  implemented: none
+  detail: >-
+    No standard reference found. No Green Button / NAESB REQ.21 ESPI, no CDR
+    Consumer Data Standards, no IEEE 2030.5, no OpenADR, no IEC CIM 61968/61970,
+    no OCPP or OCPI. The only machine-readable surface follows the Esri ArcGIS
+    REST API convention (services / FeatureServer / layer / query with f=json),
+    which is a vendor platform interface rather than an energy-sector data
+    standard. The OGC API - Features alternative was probed on each service
+    (.../OGCFeatureServer/api?f=json) and is not enabled - it returns
+    {"error":{"code":400,"message":"Invalid URL"}} - so no OpenAPI document is
+    generated by the platform either.
+
+consumerVersusMarketDataSplit:
+  consumer_data_api: false
+  consumer_data_detail: >-
+    Closed at every level. A customer can look at two years of billing and usage
+    as graphs inside the Easymax online account and cannot take the data out in
+    any form - ENMAX's own words are "view-only ... and can't be exported at this
+    time." There is no download, no CSV, no XML, no Green Button DMD, no Green
+    Button CMD, no OAuth consent surface, no third-party registration, no third
+    party terms and conditions, and no accredited-recipient scheme, because no
+    regulation requires any of it. This is the unmandated end state.
+  market_data_open: true
+  market_data_detail: >-
+    Genuinely open, and verified by anonymous query. ENMAX Power publishes
+    distribution-system hosting capacity (estimated remaining DER interconnection
+    headroom per feeder segment), remaining load capacity, and the service area
+    boundary as public ArcGIS feature services that answer unauthenticated HTTP
+    requests with JSON. That is exactly the data a solar, storage or EV-charging
+    developer needs before siting a project, which is why it is open - it lowers
+    ENMAX's own interconnection-enquiry burden. It is undocumented and unbranded
+    as an API, but it works.
+  wholesale_market_data: >-
+    Not ENMAX's to publish. Alberta wholesale market and transmission data belongs
+    to the Alberta Electric System Operator (AESO); ENMAX's own system-resources
+    page defers to it, linking out to
+    https://www.aeso.ca/grid/connecting-to-the-grid/transmission-capability-map/
+    for transmission capability and to https://developmentmap.calgary.ca/ for the
+    City of Calgary's development map.
+
+accessGate:
+  gate: none-published
+  detail: >-
+    ENMAX publishes no developer access path at all - no portal, no application
+    form, no API keys, no terms of use, no contact for API access, no pricing and
+    no partner programme. There is nothing to sign up for and nothing to apply
+    to. Recorded as none-published rather than self-serve because ENMAX has not
+    published a route in; the openness of the ArcGIS services is a consequence of
+    the Esri hosting model, not of a published access decision.
+  whatADeveloperMustActuallyDo: >-
+    For grid data - nothing. Issue an anonymous HTTPS GET against
+    https://services1.arcgis.com/NKgP4VcXUzEyOnmg/arcgis/rest/services/<service>/FeatureServer/<layer>/query?where=1=1&outFields=*&f=json
+    and the data comes back. No key, no account, no agreement, and no support if
+    the date-stamped service path is retired. For consumer usage data - there is
+    no route. Not application, not accreditation, not a commercial deal. The
+    customer cannot export it themselves, so no third party can be delegated it.
+  gated: false
+
+authModel:
+  publicSurfaces: >-
+    None. The ArcGIS feature services accept anonymous requests. The ArcGIS
+    tenant info endpoint
+    (https://services1.arcgis.com/NKgP4VcXUzEyOnmg/arcgis/rest/info?f=json, HTTP
+    200) advertises isTokenBasedSecurity true with tokenServicesUrl
+    https://www.arcgis.com/sharing/generateToken - that is the standard Esri
+    platform token service for privileged operations, not a gate on these public
+    read layers, which were confirmed to answer without a token.
+  customerSurfaces: >-
+    Session-based web sign-in at https://myaccount.enmax.com/ (HTTP 200), with
+    account number and phone number required to register. No OpenID Connect
+    discovery document is served -
+    https://www.enmax.com/.well-known/openid-configuration returned HTTP 404, and
+    the same path on powerservices.enmax.com and outages.enmax.com returned HTTP
+    200 but with the React single-page-app HTML shell (2,552 bytes, text/html),
+    not OIDC JSON. No OAuth 2.0 authorization endpoint, no client registration and
+    no scopes are published anywhere.
+  standardsBasedConsentFlow: none
+
+undocumentedBackendsObserved:
+  - host: https://outages.enmax.com/
+    what: >-
+      "ENMAX Outage Portal", a React single-page application (HTTP 200, title
+      "ENMAX Outage Portal"). Its JavaScript bundle
+      (/assets/index-CODpfcQX.js, HTTP 200, 640,815 bytes) sets an axios default
+      of baseURL="/api" and references route names including Outage/ReportOutage,
+      meta/banners, profile, outage-user, contractor/access-requests,
+      contractor/submitaccessrequest, user/generatecode and a family of
+      Management/* administrative routes.
+    verified: >-
+      https://outages.enmax.com/api/meta/banners returned HTTP 200
+      application/json (1,484 bytes) anonymously, containing site banner content.
+      https://outages.enmax.com/api/outage-user returned HTTP 401. Other probed
+      paths (/api, /api/config, /openapi.json, /swagger.json,
+      /swagger/v1/swagger.json, /api-docs) all returned the 3,490-byte SPA index
+      shell under the catch-all route, so no specification is served.
+    judgement: >-
+      Deliberately NOT listed in apis.yml. This is the private backend of a
+      customer-facing web application, not a published API - undocumented,
+      unversioned, session-authenticated for anything meaningful, and never
+      offered to third parties. Recorded here as an observation only.
+  - host: https://assets.enmax.com/
+    what: >-
+      Sitecore Content Hub digital asset management
+      (CNAME enm-p-001.sitecorecontenthub.cloud). https://assets.enmax.com/api
+      returned HTTP 401; a public content path,
+      https://assets.enmax.com/api/public/content/137e847fb825406f9a419f5ddb642e18,
+      returned HTTP 200 application/pdf (478,661 bytes).
+    judgement: >-
+      Vendor CMS asset delivery, not an ENMAX API. Not listed.
+  - host: https://portal.enmax.com/
+    what: >-
+      Resolves to Vercel (cname.vercel-dns.com, 76.76.21.123, 66.33.60.35) but
+      the connection failed (curl exit 35, no HTTP response). Nothing to record.
+
+organization:
+  legalName: ENMAX Corporation
+  ownership: Wholly owned by The City of Calgary
+  headquarters: Calgary, Alberta, Canada
+  homeMarket: Canada
+  alsoOperatesIn: United States (Maine, via Versant Power, acquired from Emera in 2020)
+  businessUnits:
+    - name: ENMAX Power
+      role: >-
+        Regulated electricity transmission and distribution (wires) inside the
+        City of Calgary. Owner of the AMI smart-metering programme and of the
+        hosting-capacity, load-capacity and service-area data published openly.
+    - name: ENMAX Energy
+      role: >-
+        Competitive generation and retail supply of electricity and natural gas
+        into Alberta's deregulated market, under the Easymax brand.
+    - name: Versant Power
+      role: >-
+        Transmission and distribution utility for northern and eastern Maine,
+        USA, regulated by the Maine Public Utilities Commission.
+  selfDescription: >-
+    "a regulated wires company, a competitive power generator and an energy
+    retailer" operating "across Alberta and Maine" - https://www.enmax.com/about-us
+  systemOperator: >-
+    Alberta Electric System Operator (AESO) runs the Alberta wholesale market;
+    the Alberta Utilities Commission (AUC) is the economic regulator.
+
+artifacts:
+  openapi: 0
+  asyncapi: 0
+  postman: 0
+  graphql: 0
+  note: >-
+    No machine-readable API contract was found for ENMAX in any format, so no
+    openapi/ directory was created. Nothing was fabricated or generated. The
+    ArcGIS REST service metadata documents are real and were fetched, but they
+    are Esri platform descriptors rather than OpenAPI, AsyncAPI or any other
+    API specification, and were deliberately not filed as specs.
+
+sources:
+  - url: https://www.enmax.com/
+    status: 200
+    fetched: '2026-07-27'
+  - url: https://www.enmax.com/about-us
+    status: 200
+    fetched: '2026-07-27'
+  - url: https://www.enmax.com/sitemap.xml
+    status: 200
+    fetched: '2026-07-27'
+  - url: https://www.enmax.com/robots.txt
+    status: 200
+    fetched: '2026-07-27'
+  - url: https://www.enmax.com/customer-support/for-my-home/what-is-energy-insights-for-easymax
+    status: 200
+    fetched: '2026-07-27'
+  - url: https://www.enmax.com/services/meter-services/meter-reading/electricity-usage-data
+    status: 200
+    fetched: '2026-07-27'
+  - url: https://www.enmax.com/projects/advanced-metering-infrastructure-ami-program
+    status: 200
+    fetched: '2026-07-27'
+  - url: https://www.enmax.com/system-resources
+    status: 200
+    fetched: '2026-07-27'
+  - url: https://www.enmax.com/system-resources/hosting-capacity-map
+    status: 200
+    fetched: '2026-07-27'
+  - url: https://www.enmax.com/system-resources/load-capacity-map
+    status: 200
+    fetched: '2026-07-27'
+  - url: https://www.enmax.com/system-resources/service-area-map
+    status: 200
+    fetched: '2026-07-27'
+  - url: https://www.enmax.com/green-button
+    status: 404
+    fetched: '2026-07-27'
+  - url: https://www.enmax.com/greenbutton
+    status: 404
+    fetched: '2026-07-27'
+  - url: https://www.enmax.com/developers
+    status: 404
+    fetched: '2026-07-27'
+  - url: https://www.enmax.com/developer
+    status: 404
+    fetched: '2026-07-27'
+  - url: https://www.enmax.com/api
+    status: 404
+    fetched: '2026-07-27'
+  - url: https://www.enmax.com/data
+    status: 404
+    fetched: '2026-07-27'
+  - url: https://www.enmax.com/open-data
+    status: 404
+    fetched: '2026-07-27'
+  - url: https://www.enmax.com/openapi.json
+    status: 404
+    fetched: '2026-07-27'
+  - url: https://www.enmax.com/swagger.json
+    status: 404
+    fetched: '2026-07-27'
+  - url: https://www.enmax.com/.well-known/openid-configuration
+    status: 404
+    fetched: '2026-07-27'
+  - url: https://www.enmax.com/.well-known/security.txt
+    status: 404
+    fetched: '2026-07-27'
+  - url: https://www.enmax.com/llms.txt
+    status: 404
+    fetched: '2026-07-27'
+  - url: https://developer.enmax.com/
+    status: 525
+    fetched: '2026-07-27'
+    note: Wildcard DNS to Cloudflare, no origin. Same for developers., api., docs., data., outagemap., cap., sne.
+  - url: https://developers.enmax.com/
+    status: 525
+    fetched: '2026-07-27'
+  - url: https://api.enmax.com/
+    status: 525
+    fetched: '2026-07-27'
+  - url: https://docs.enmax.com/
+    status: 525
+    fetched: '2026-07-27'
+  - url: https://data.enmax.com/
+    status: 525
+    fetched: '2026-07-27'
+  - url: https://myaccount.enmax.com/
+    status: 200
+    fetched: '2026-07-27'
+  - url: https://outages.enmax.com/
+    status: 200
+    fetched: '2026-07-27'
+  - url: https://outages.enmax.com/assets/index-CODpfcQX.js
+    status: 200
+    fetched: '2026-07-27'
+  - url: https://outages.enmax.com/api/meta/banners
+    status: 200
+    fetched: '2026-07-27'
+  - url: https://outages.enmax.com/api/outage-user
+    status: 401
+    fetched: '2026-07-27'
+  - url: https://assets.enmax.com/api
+    status: 401
+    fetched: '2026-07-27'
+  - url: https://geoarm.maps.arcgis.com/sharing/rest/content/items/6b042eedd84f4a9ab224a3ed2f527076/data?f=json
+    status: 200
+    fetched: '2026-07-27'
+    note: Hosting Capacity Map web app configuration
+  - url: https://geoarm.maps.arcgis.com/sharing/rest/content/items/2a148b189b884654b691b2909bef16df/data?f=json
+    status: 200
+    fetched: '2026-07-27'
+    note: Load Capacity Map web app configuration
+  - url: https://geoarm.maps.arcgis.com/sharing/rest/content/items/275434f01d8645b4b5d7abb746f7ec30/data?f=json
+    status: 200
+    fetched: '2026-07-27'
+    note: Service Area Map web app configuration
+  - url: https://services1.arcgis.com/NKgP4VcXUzEyOnmg/arcgis/rest/services?f=json
+    status: 200
+    fetched: '2026-07-27'
+  - url: https://services1.arcgis.com/NKgP4VcXUzEyOnmg/arcgis/rest/info?f=json
+    status: 200
+    fetched: '2026-07-27'
+  - url: https://services1.arcgis.com/NKgP4VcXUzEyOnmg/arcgis/rest/services/Generation_Capacity_Layers_20250219_PUBLIC/FeatureServer?f=json
+    status: 200
+    fetched: '2026-07-27'
+  - url: https://services1.arcgis.com/NKgP4VcXUzEyOnmg/arcgis/rest/services/Generation_Capacity_Layers_20250219_PUBLIC/FeatureServer/1/query?where=1%3D1&outFields=*&returnGeometry=false&resultRecordCount=2&f=json
+    status: 200
+    fetched: '2026-07-27'
+    note: Anonymous query returning real hosting-capacity attribute rows
+  - url: https://services1.arcgis.com/NKgP4VcXUzEyOnmg/arcgis/rest/services/Feeder_Load_Capacity_Rev9_20251211/FeatureServer?f=json
+    status: 200
+    fetched: '2026-07-27'
+  - url: https://services1.arcgis.com/NKgP4VcXUzEyOnmg/arcgis/rest/services/ENMAX_Service_Area_for_LAF_Verification/FeatureServer?f=json
+    status: 200
+    fetched: '2026-07-27'
+  - url: https://services1.arcgis.com/NKgP4VcXUzEyOnmg/arcgis/rest/services/Generation_Capacity_Layers_20250219_PUBLIC/OGCFeatureServer/api?f=json
+    status: 200
+    fetched: '2026-07-27'
+    note: 'Returns {"error":{"code":400,"message":"Invalid URL"}} — OGC API Features not enabled, so no platform-generated OpenAPI'
+  - url: https://www.versantpower.com/
+    status: 200
+    fetched: '2026-07-27'
+  - url: https://www.versantpower.com/green-button
+    status: 200
+    fetched: '2026-07-27'
+    note: SPA shell only; rendered content is Versant Power's Page Not Found. No Green Button page exists.
+  - url: https://github.com/enmax
+    status: 200
+    fetched: '2026-07-27'
+    note: >-
+      NOT the utility. GitHub API shows type User, no name, no company, no bio,
+      0 public repos, created 2019-03-26. Deliberately excluded from apis.yml.
+  - url: https://www.linkedin.com/company/enmax
+    status: 200
+    fetched: '2026-07-27'
