@@ -110,8 +110,30 @@ apis:
   - type: Website
     url: https://services1.arcgis.com/NKgP4VcXUzEyOnmg/arcgis/rest/services?f=json
 common:
+- type: DomainSecurity
+  url: security/enmax-domain-security.yml
+- type: Authentication
+  url: authentication/enmax-authentication.yml
+- type: Conventions
+  url: conventions/enmax-conventions.yml
+- type: ErrorCatalog
+  url: errors/enmax-problem-types.yml
+- type: RateLimits
+  url: rate-limits/enmax-rate-limits.yml
+- type: DataModel
+  url: data-model/enmax-data-model.yml
+- type: Lifecycle
+  url: lifecycle/enmax-lifecycle.yml
+- type: Conformance
+  url: conformance/enmax-conformance.yml
+- type: Examples
+  url: examples/_index.yml
+- type: LLMsTxt
+  url: llms/enmax-llms.txt
 - type: Website
   url: https://www.enmax.com/
+- type: Documentation
+  url: https://www.enmax.com/system-resources
 - type: About
   url: https://www.enmax.com/about-us
 - type: Blog
@@ -124,6 +146,12 @@ common:
   url: https://myaccount.enmax.com/
 - type: Support
   url: https://www.enmax.com/customer-support
+- type: Contact
+  url: https://www.enmax.com/contact-us
+- type: TermsOfService
+  url: https://www.enmax.com/terms-of-use
+- type: PrivacyPolicy
+  url: https://www.enmax.com/privacy
 - type: Status
   url: https://outages.enmax.com/
 maintainers:

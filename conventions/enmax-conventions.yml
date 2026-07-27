@@ -1,0 +1,164 @@
+generated: '2026-07-27'
+method: probed
+source: >-
+  Derived from live anonymous probes of ENMAX Power's public ArcGIS REST feature
+  services (services1.arcgis.com/NKgP4VcXUzEyOnmg), 2026-07-27, plus the layer
+  and FeatureServer metadata documents those services return. ENMAX publishes no
+  API documentation of any kind, so every convention below was observed on the
+  wire rather than read from a docs page. The conventions are the Esri ArcGIS
+  REST platform's, inherited by ENMAX's data rather than designed by ENMAX.
+api: enmax:enmax-power-system-capacity-arcgis-feature-services
+provider_documented: false
+platform: Esri ArcGIS Online hosted feature services, currentVersion 12 (fullVersion 12.0.0)
+
+authentication:
+  style: none
+  detail: Anonymous read. See authentication/enmax-authentication.yml.
+
+resource_addressing:
+  pattern: >-
+    /arcgis/rest/services/{serviceName}/FeatureServer/{layerId}/{operation}
+  operations_observed:
+  - path: /arcgis/rest/services?f=json
+    returns: Service directory — the list of FeatureServers in the tenant.
+  - path: /arcgis/rest/info?f=json
+    returns: Platform version and auth info.
+  - path: /arcgis/rest/services/{service}/FeatureServer?f=json
+    returns: Service metadata, layer list, capabilities, maxRecordCount.
+  - path: /arcgis/rest/services/{service}/FeatureServer/{layerId}?f=json
+    returns: Layer metadata — fields, geometry type, extent, query capabilities.
+  - path: /arcgis/rest/services/{service}/FeatureServer/{layerId}/query
+    returns: Feature rows.
+  capabilities: Query
+  write_operations: none — the services advertise capabilities "Query" only.
+
+content_negotiation:
+  mechanism: >-
+    A query-string format parameter, NOT the Accept header. Every response is
+    served as application/json regardless of format; f selects the payload
+    shape.
+  parameter: f
+  values_advertised_by_layers: [JSON, geoJSON, PBF]
+  values_verified:
+  - {f: json, status: 200, content_type: application/json, note: Esri JSON}
+  - {f: geojson, status: 200, content_type: application/json, note: RFC 7946 FeatureCollection}
+  - {f: html, status: 200, content_type: text/html, note: The Esri REST services directory browser page}
+  caveat: >-
+    The FeatureServer root advertises supportedQueryFormats "JSON" while its
+    layers advertise "JSON, geoJSON, PBF". The layer-level advertisement is the
+    accurate one — f=geojson was verified live and returned a real
+    FeatureCollection.
+
+filtering:
+  parameter: where
+  language: SQL-92 WHERE clause fragment
+  match_all: where=1%3D1
+  spatial: >-
+    Standard ArcGIS geometry/geometryType/spatialRel/inSR parameters are
+    available on the query resource; not exercised in this capture.
+
+sparse_fields:
+  parameter: outFields
+  all: outFields=*
+  subset: outFields=OBJECTID,FEEDERID,Capacity_Available
+  geometry_toggle: returnGeometry=false
+  note: >-
+    returnGeometry=false is the meaningful economy here — these are polyline and
+    polygon feature classes and geometry dominates the payload.
+
+pagination:
+  style: offset
+  supported: true
+  evidence: >-
+    Every layer resource reports advancedQueryCapabilities.supportsPagination
+    true; resultOffset=5&resultRecordCount=2 was issued live and returned
+    OBJECTID 37 and 38 rather than the first rows.
+  params:
+    offset: resultOffset
+    limit: resultRecordCount
+    order: orderByFields
+  page_size_ceiling: 1000
+  ceiling_field: maxRecordCount (reported by both the service and each layer)
+  more_results_signal: exceededTransferLimit
+  more_results_detail: >-
+    A boolean on the response body (and inside properties on the geojson shape).
+    true means the server truncated — there is no cursor, no next link and no
+    total count on the page; the client increments resultOffset until
+    exceededTransferLimit is absent.
+  total_count:
+    supported: true
+    param: returnCountOnly=true
+    response: '{"count":N}'
+    observed:
+    - {layer: Generation_Capacity_Layers_20250219_PUBLIC/FeatureServer/1, count: 2852}
+    - {layer: Feeder_Load_Capacity_Rev9_20251211/FeatureServer/0, count: 30057}
+
+idempotency:
+  supported: false
+  idempotency_key_header: none
+  detail: >-
+    There is no idempotency contract and there cannot usefully be one — the
+    services expose the Query capability only, every operation is a safe GET,
+    and no write, create or transaction surface exists. Recorded as absent
+    rather than as unsupported design.
+
+error_handling:
+  transport_status: >-
+    ERRORS ARE RETURNED WITH HTTP 200. An invalid field, a nonexistent layer and
+    a nonexistent service all returned HTTP status 200 with an error object in
+    the JSON body. Clients that branch on HTTP status alone will treat every
+    failure as a success. This is the single most important convention to know
+    about this surface.
+  envelope: '{"error": {"code": <int>, "message": <string>, "details": [<string>, ...]}}'
+  catalog: errors/enmax-problem-types.yml
+  rfc9457: false
+
+caching:
+  cache_control: 'public, max-age=30, s-maxage=30'
+  etag: true
+  etag_form: 'sd6251_858397229 (opaque, Esri-generated)'
+  last_modified: true
+  conditional_requests: supported via ETag / Last-Modified
+  cdn: Azure Front Door (x-azure-ref, x-cache TCP_MISS observed)
+
+request_tracing:
+  headers_returned:
+  - x-arcgis-trace-id
+  - x-arcgis-correlation-id
+  - x-arcgis-instance
+  - x-arcgis-upstream
+  client_supplied_request_id: not supported
+  note: >-
+    Trace identifiers are returned but ENMAX publishes no support channel that
+    accepts them — there is no API support contact, so a trace id has nowhere to
+    go.
+
+rate_limiting:
+  signaled: true
+  artifact: rate-limits/enmax-rate-limits.yml
+  headers:
+  - x-esri-org-request-units-per-min
+  - x-esri-query-request-units
+
+cors:
+  allow_origin: '*'
+  allow_headers: 'Content-Type, Authorization, X-Esri-Authorization'
+  allow_credentials: true
+  expose_headers: Request-Context
+  browser_callable: true
+
+versioning:
+  scheme: none-published
+  detail: >-
+    Version is encoded in the service NAME, not in a path segment, header or
+    media type — Feeder_Load_Capacity_Rev9_20251211. See
+    lifecycle/enmax-lifecycle.yml.
+
+cross_references:
+  authentication: authentication/enmax-authentication.yml
+  errors: errors/enmax-problem-types.yml
+  lifecycle: lifecycle/enmax-lifecycle.yml
+  rate_limits: rate-limits/enmax-rate-limits.yml
+  data_model: data-model/enmax-data-model.yml
+  examples: examples/_index.yml
+  conformance: conformance/enmax-conformance.yml

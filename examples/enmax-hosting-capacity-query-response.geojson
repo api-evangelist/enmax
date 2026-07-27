@@ -1,0 +1,1 @@
+{"type":"FeatureCollection","properties":{"exceededTransferLimit":true},"features":[{"type":"Feature","id":32,"geometry":null,"properties":{"OBJECTID":32,"FEEDERID":null,"Description":"Three Phase Primary Overhead","Phase_Designation":"ABC","Range":"1,000 kW - 4,999 kW","Date_Last_Updated":"February 2025","Shape__Length":224.12013180832838}}]}

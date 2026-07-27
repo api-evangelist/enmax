@@ -1,0 +1,187 @@
+generated: '2026-07-27'
+method: derived
+source: >-
+  Derived from the ArcGIS layer metadata documents fetched anonymously from
+  services1.arcgis.com/NKgP4VcXUzEyOnmg on 2026-07-27 (one GET per layer,
+  f=json) and from the live query responses saved verbatim under examples/.
+  Every field name, type and value band below was read off the live service.
+  ENMAX publishes no data dictionary, so nothing here comes from documentation.
+api: enmax:enmax-power-system-capacity-arcgis-feature-services
+model_type: geospatial-feature-classes
+note: >-
+  This is a flat feature-class model, not a relational one. There are no foreign
+  keys, no $ref graph and no OpenAPI schemas — ArcGIS layers are independent
+  tables of geometry plus attributes. The one real join key is FEEDERID, which
+  is not declared as a key anywhere and is not enforced.
+
+entities:
+- name: HostingCapacitySegment
+  service: Generation_Capacity_Layers_20250219_PUBLIC
+  layers: [1, 2]
+  layer_name: Three Phase - Estimated Remaining Hosting Capacity (February 2025)
+  geometry_type: esriGeometryPolyline
+  object_id_field: OBJECTID
+  feature_count: 2852
+  description: >-
+    A segment of ENMAX Power three-phase distribution primary, carrying the
+    estimated remaining headroom for connecting distributed energy resources
+    (solar, storage) at that point on the feeder. This is the entity a DER
+    developer actually needs before siting a project.
+  fields:
+  - {name: OBJECTID, type: esriFieldTypeOID, role: identifier}
+  - {name: FEEDERID, type: esriFieldTypeString, length: 20, role: join-key, nullable_observed: true}
+  - {name: Description, type: esriFieldTypeString, role: classification, example: Three Phase Primary Overhead}
+  - {name: Phase_Designation, type: esriFieldTypeString, role: classification, example: ABC}
+  - {name: Range, type: esriFieldTypeString, role: measure-band, example: 1,000 kW - 4,999 kW}
+  - {name: Date_Last_Updated, type: esriFieldTypeString, role: vintage, example: February 2025}
+  - {name: Shape__Length, type: esriFieldTypeDouble, role: geometry-derived, units: esriMeters}
+  measure_note: >-
+    Capacity is published as a STRING BAND (Range), not a number. There is no
+    numeric hosting-capacity field on this entity, so a consumer cannot compute,
+    sort or threshold on it without parsing the band text.
+  duplicate_layer_note: >-
+    Layers 1 and 2 carry an identical field set and layer name — a cartographic
+    split (two symbology renderers over the same data) surfaced as two API
+    resources. Query both or neither; there is nothing in the metadata that says
+    which.
+- name: LoadCapacitySegment
+  service: Feeder_Load_Capacity_Rev9_20251211
+  layers: [0, 1]
+  layer_name: Two and Three Phase Estimated Remaining Load Capacity (December 2025)
+  geometry_type: esriGeometryPolyline
+  object_id_field: OBJECTID
+  feature_count: 30057
+  description: >-
+    A segment of ENMAX Power two- or three-phase distribution primary carrying
+    the estimated remaining LOAD capacity — headroom for new demand rather than
+    new generation. The complement of HostingCapacitySegment.
+  fields:
+  - {name: OBJECTID, type: esriFieldTypeOID, role: identifier}
+  - {name: FEEDERID, type: esriFieldTypeString, role: join-key, example: 8-10.12}
+  - {name: Description, type: esriFieldTypeString, role: classification, example: 3 Phase Primary}
+  - {name: Phase_Designation, type: esriFieldTypeString, role: classification, example: ABC}
+  - {name: F_timestamp, type: esriFieldTypeString, role: vintage, example: December 2025}
+  - {name: Capacity_Available, type: esriFieldTypeString, role: measure-band, example: 1,000-2,999KVA}
+  - {name: KVA_Number, type: esriFieldTypeDouble, role: measure, units: kVA, example: 2999}
+  - {name: Shape__Length, type: esriFieldTypeDouble, role: geometry-derived, units: esriMeters}
+  measure_note: >-
+    Unlike the hosting-capacity entity this one DOES carry a numeric measure,
+    KVA_Number — but it is the upper bound of the Capacity_Available band, not a
+    point estimate (band "1,000-2,999KVA" carries 2999; band "< 999 KVA" carries
+    999). Treat it as a ceiling, never as an available figure.
+  duplicate_layer_note: Layers 0 and 1 are the same cartographic split as above.
+- name: ServiceArea
+  service: ENMAX_Service_Area_for_LAF_Verification
+  layers: [0]
+  geometry_type: esriGeometryPolygon
+  object_id_field: OBJECTID
+  feature_count: 3
+  description: >-
+    The ENMAX Power distribution service boundary, as three polygons that also
+    function as a routing table — each carries the enmax.com or third-party URL
+    a connection enquiry for that zone should go to.
+  fields:
+  - {name: OBJECTID, type: esriFieldTypeOID, role: identifier}
+  - {name: Type, type: esriFieldTypeString, role: classification}
+  - {name: Link, type: esriFieldTypeString, role: reference-url}
+  - {name: Link_2, type: esriFieldTypeString, role: reference-url, nullable_observed: true}
+  - {name: Shape__Area, type: esriFieldTypeDouble, role: geometry-derived}
+  - {name: Shape__Length, type: esriFieldTypeDouble, role: geometry-derived}
+  enumerated_values:
+  - Type: Outside ENMAX Service Area
+    Link: https://wherestheline.ca/contact-us
+  - Type: Inside ENMAX Service Area (excluding downtown)
+    Link: https://www.enmax.com/services/electricity-services/get-connected
+  - Type: Inside ENMAX Downtown Network Boundary
+    Link: https://www.enmax.com/ServicesSite/Documents/ENMAX-Network-Servicing-Policies-and-Guidelines.pdf
+    Link_2: https://www.enmax.com/services/electricity-services/get-connected
+  source_example: examples/enmax-service-area-query-response.json
+- name: ServiceAreaOutline
+  service: [Generation_Capacity_Layers_20250219_PUBLIC, Feeder_Load_Capacity_Rev9_20251211]
+  layers: [0, 2]
+  layer_name: ENMAX Service Area
+  geometry_type: esriGeometryPolyline
+  description: >-
+    A basemap outline of the service boundary, duplicated inside each capacity
+    service purely so the map draws. Carries no capacity data.
+  fields:
+  - {name: OBJECTID, type: esriFieldTypeOID}
+  - {name: Id, type: esriFieldTypeInteger}
+  - {name: ORIG_FID, type: esriFieldTypeInteger}
+  - {name: Shape__Length, type: esriFieldTypeDouble}
+- name: NoDataArea
+  service: [Generation_Capacity_Layers_20250219_PUBLIC, Feeder_Load_Capacity_Rev9_20251211]
+  layers: [3]
+  layer_name: Areas with no data - Please contact ENMAX
+  geometry_type: esriGeometryPolygon
+  description: >-
+    Explicit coverage gaps. A developer must intersect a candidate site against
+    this layer before trusting an absence of capacity features as an absence of
+    capacity — the two are not the same thing.
+  fields:
+  - {name: OBJECTID, type: esriFieldTypeOID}
+  - {name: Shape__Area, type: esriFieldTypeDouble}
+  - {name: Shape__Length, type: esriFieldTypeDouble}
+
+relationships:
+- from: HostingCapacitySegment
+  to: LoadCapacitySegment
+  type: relates_to
+  via: FEEDERID
+  cardinality: many_to_many
+  enforced: false
+  confidence: medium
+  note: >-
+    Both entities carry a FEEDERID naming the same physical distribution feeder,
+    so generation headroom and load headroom can be joined per feeder. Neither
+    layer declares it as a key, no referential integrity exists, and FEEDERID
+    was observed null on some hosting-capacity rows — join defensively.
+- from: HostingCapacitySegment
+  to: ServiceArea
+  type: contained_by
+  via: geometry (spatial)
+  cardinality: many_to_one
+  enforced: false
+  note: Spatial containment only; there is no attribute linking them.
+- from: LoadCapacitySegment
+  to: ServiceArea
+  type: contained_by
+  via: geometry (spatial)
+  cardinality: many_to_one
+  enforced: false
+- from: NoDataArea
+  to: [HostingCapacitySegment, LoadCapacitySegment]
+  type: negates
+  via: geometry (spatial)
+  note: >-
+    Where a NoDataArea polygon covers a site, the absence of capacity features
+    means "not published", not "no capacity".
+
+spatial_reference:
+  wkid_name: Calgary_3TM_WGS_1984_W114
+  projection: Transverse_Mercator
+  central_meridian: -114.0
+  scale_factor: 0.9999
+  datum: D_WGS_1984
+  units: Meter
+  note: >-
+    Geometry comes back in a Calgary-local 3TM projection, not WGS 84
+    lat/long. Request outSR=4326 (or use f=geojson, which returns WGS 84) if you
+    need geographic coordinates.
+
+identifiers:
+  primary: OBJECTID
+  stability: >-
+    OBJECTID is service-local and NOT stable across revisions — it is
+    regenerated when a new dated service is published. FEEDERID is the only
+    identifier with real-world meaning, and it is not unique per row (many
+    segments share a feeder).
+
+gaps:
+- No data dictionary, no field definitions and no units documentation is published by ENMAX.
+- >-
+  No numeric hosting-capacity value exists — only the Range string band, which
+  cannot be sorted or thresholded without parsing.
+- >-
+  No temporal dimension. Each service is a single dated snapshot; there is no
+  history, no time-series and no way to query capacity as of an earlier date.

@@ -1,0 +1,99 @@
+generated: '2026-07-27'
+method: probed
+source: >-
+  Live anonymous error probes against ENMAX Power's public ArcGIS REST feature
+  services (services1.arcgis.com/NKgP4VcXUzEyOnmg), 2026-07-27. ENMAX publishes
+  no error reference — there is no developer portal and no documentation — so
+  every entry below is an error body actually returned by the live service and
+  captured verbatim. Nothing was inferred from an OpenAPI document because none
+  exists.
+api: enmax:enmax-power-system-capacity-arcgis-feature-services
+format: esri-arcgis-rest
+rfc9457: false
+provider_documented: false
+
+envelope:
+  shape: '{"error": {"code": <int>, "message": <string>, "details": [<string>, ...]}}'
+  content_type: application/json
+  transport_status: >-
+    200 OK. Every error observed was returned with HTTP status 200; the error
+    code lives only in the body. There is no 4xx or 5xx signalling on any of the
+    probed failure modes. A client MUST inspect the body for an "error" key on
+    every response.
+  success_discriminator: >-
+    A successful query response has "features" (Esri JSON) or "type":
+    "FeatureCollection" (GeoJSON) and no "error" key.
+
+problems:
+- code: 400
+  message: Invalid URL
+  details:
+  - Invalid URL
+  meaning: >-
+    The service name in the path does not exist in the tenant, or the resource
+    segment is not one this service exposes.
+  http_status_returned: 200
+  observed_request: >-
+    GET /arcgis/rest/services/Nope_Does_Not_Exist/FeatureServer?f=json
+  also_observed_for: >-
+    /arcgis/rest/services/Generation_Capacity_Layers_20250219_PUBLIC/OGCFeatureServer?f=json
+    — the OGC API Features endpoint is not enabled on these services, and it
+    fails with this same generic message rather than a distinguishable one.
+  remediation: >-
+    Re-read the current service directory at /arcgis/rest/services?f=json. The
+    service names are date-stamped and roll over; a name that worked previously
+    can disappear without notice.
+  verified: '2026-07-27'
+- code: 400
+  message: ''
+  details:
+  - 'The requested layer (layerId: 99) was not found.'
+  meaning: The service exists but has no layer with that id.
+  http_status_returned: 200
+  observed_request: >-
+    GET /arcgis/rest/services/Generation_Capacity_Layers_20250219_PUBLIC/FeatureServer/99?f=json
+  remediation: >-
+    Read the layers array from the FeatureServer metadata document. Layer ids
+    are not stable across service revisions — Rev9 of the load capacity service
+    orders its layers differently from the hosting capacity service.
+  note: >-
+    message is an EMPTY STRING for this class; the only human-readable text is
+    in details[0]. A client that surfaces only error.message will show the user
+    a blank error.
+  verified: '2026-07-27'
+- code: 400
+  message: Cannot perform query. Invalid query parameters.
+  details:
+  - "'Invalid field: BOGUSFIELD' parameter is invalid"
+  meaning: >-
+    A field named in where, outFields or orderByFields does not exist on the
+    layer.
+  http_status_returned: 200
+  observed_request: >-
+    GET /arcgis/rest/services/Generation_Capacity_Layers_20250219_PUBLIC/FeatureServer/1/query?where=BOGUSFIELD%3D1&outFields=*&f=json
+  remediation: >-
+    Read the fields array from the layer metadata document. Field names are
+    case-sensitive and vary between services — the hosting capacity layers carry
+    Range and Date_Last_Updated where the load capacity layers carry
+    Capacity_Available, KVA_Number and F_timestamp.
+  captured_response: examples/enmax-error-invalid-field-response.json
+  verified: '2026-07-27'
+
+not_errors_but_worth_branching_on:
+- signal: exceededTransferLimit
+  value: true
+  meaning: >-
+    Not an error. The result set was truncated at maxRecordCount (1000). Page
+    with resultOffset / resultRecordCount. Silently dropping rows because this
+    flag was ignored is the most likely real-world defect against this surface.
+  reference: conventions/enmax-conventions.yml
+
+gaps:
+- >-
+  No error code registry, no error taxonomy and no remediation guidance is
+  published by ENMAX or reachable from enmax.com. This catalog covers only the
+  failure modes that could be triggered anonymously.
+- >-
+  No RFC 9457 problem+json, no RFC 7807, and no per-error type URI. The code
+  values are Esri platform codes, not ENMAX codes, and 400 is reused for three
+  materially different conditions.

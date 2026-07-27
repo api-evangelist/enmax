@@ -1,0 +1,99 @@
+generated: '2026-07-27'
+method: probed
+source: >-
+  Live probes of the ArcGIS service directory and each FeatureServer metadata
+  document, 2026-07-27, plus a search of enmax.com for any versioning,
+  deprecation, SLA or API status page. ENMAX publishes no API lifecycle policy
+  of any kind; every field below is either observed behaviour or a recorded
+  absence.
+api: enmax:enmax-power-system-capacity-arcgis-feature-services
+provider_documented: false
+
+versioning:
+  scheme: service-name-embedded
+  policy_url: null
+  detail: >-
+    Version and vintage are baked into the service NAME — not a path segment,
+    not a header, not a media type. Feeder_Load_Capacity_Rev9_20251211 encodes
+    revision 9 dated 11 December 2025; Generation_Capacity_Layers_20250219_PUBLIC
+    encodes 19 February 2025. A consumer cannot pin to a stable URL, because the
+    URL IS the version.
+  current:
+  - service: Generation_Capacity_Layers_20250219_PUBLIC
+    vintage: '2025-02-19'
+    data_stamp: February 2025 (Date_Last_Updated attribute)
+    features: 2852
+  - service: Feeder_Load_Capacity_Rev9_20251211
+    revision: Rev9
+    vintage: '2025-12-11'
+    data_stamp: December 2025 (F_timestamp attribute)
+    features: 30057
+  - service: ENMAX_Service_Area_for_LAF_Verification
+    vintage: undated
+  platform_version:
+    currentVersion: 12
+    fullVersion: 12.0.0
+    note: The Esri ArcGIS Online platform version, not an ENMAX API version.
+
+deprecation:
+  policy_url: null
+  policy_published: false
+  sunset_header: false
+  deprecation_header: false
+  detail: >-
+    There is no deprecation policy, no notice channel, no changelog and no
+    Sunset or Deprecation header. Superseded revisions are not marked in any
+    machine-readable way and are not removed on a schedule.
+  observed_behaviour: >-
+    Feeder_Load_Capacity_Rev8_20240731 — superseded by Rev9 in December 2025 —
+    was still returning HTTP 200 on 2026-07-27, seven months later, with nothing
+    on the resource indicating it is stale. Service_Area_20190828 and
+    Downtown_Projects_PUBLIC_20230324_20231206_Public_View are likewise still
+    listed. A naive consumer that discovered Rev8 first will keep serving
+    year-old capacity figures indefinitely and will never be told.
+  superseded_but_still_live:
+  - Feeder_Load_Capacity_Rev8_20240731
+  - Service_Area_20190828
+  risk: >-
+    The inverse risk is equally real — because retirement is undocumented, a
+    date-stamped path can also disappear from the directory without notice. The
+    only safe integration pattern is to re-read /arcgis/rest/services?f=json and
+    resolve the newest matching service name on every run.
+
+change_log:
+  published: false
+  detail: >-
+    No changelog, release notes or update feed for these services. The only
+    change signal available is the Date_Last_Updated / F_timestamp attribute
+    carried on the feature rows themselves, and the item modified timestamps on
+    the three ArcGIS web application items (2025-02-20, 2025-12-12, 2025-02-20).
+
+sla:
+  published: false
+  uptime_target: null
+  support_channel: null
+  detail: >-
+    No SLA, no uptime commitment, no API support contact and no escalation path.
+    ENMAX's customer support line covers electricity and gas service, not these
+    endpoints. Availability is effectively Esri ArcGIS Online's, under ENMAX's
+    tenant, with no commitment passed through to consumers.
+
+status_page:
+  api_status_page: null
+  detail: >-
+    ENMAX has no API or service status page. https://outages.enmax.com/ is the
+    ENMAX Outage Portal — a map of electricity outages on the Calgary
+    distribution grid. It reports the state of the WIRES, not the state of these
+    endpoints, and is deliberately NOT wired as a StatusPage pointer in
+    apis.yml.
+  grid_outage_map: https://outages.enmax.com/
+
+deprecated_operations: []
+
+assessment: >-
+  This is an unmanaged lifecycle rather than a permissive one. The data is real,
+  current and openly queryable, but nothing about it is contractual — no
+  version pinning, no deprecation notice, no retirement schedule, no SLA and no
+  way to be told when any of that changes. Anyone building on it should treat
+  the service directory as the source of truth on every run and expect the path
+  under them to move.

@@ -1,0 +1,74 @@
+generated: '2026-07-27'
+method: searched
+source: >-
+  Live anonymous HTTPS GETs against ENMAX Power's public ArcGIS REST feature
+  services on services1.arcgis.com (tenant NKgP4VcXUzEyOnmg), fetched
+  2026-07-27. Every file in this directory is the verbatim response body
+  returned by the request recorded on it. Nothing was edited, reformatted or
+  synthesized. ENMAX publishes no request/response examples of its own — these
+  were captured because no credential is required.
+api: enmax:enmax-power-system-capacity-arcgis-feature-services
+base_url: https://services1.arcgis.com/NKgP4VcXUzEyOnmg/arcgis/rest/services
+examples:
+- file: enmax-hosting-capacity-query-response.json
+  title: Hosting capacity feature query (Esri JSON)
+  request: >-
+    GET /Generation_Capacity_Layers_20250219_PUBLIC/FeatureServer/1/query?where=1%3D1&outFields=*&returnGeometry=false&resultRecordCount=2&f=json
+  status: 200
+  content_type: application/json
+  fetched: '2026-07-27'
+  note: >-
+    Two rows of estimated remaining DER hosting capacity by distribution feeder
+    segment, plus the full field descriptor block and the Calgary_3TM_WGS_1984_W114
+    projected spatial reference the service returns geometry in.
+- file: enmax-hosting-capacity-query-response.geojson
+  title: Hosting capacity feature query (GeoJSON)
+  request: >-
+    GET /Generation_Capacity_Layers_20250219_PUBLIC/FeatureServer/1/query?where=1%3D1&outFields=*&returnGeometry=false&resultRecordCount=1&f=geojson
+  status: 200
+  content_type: application/json
+  fetched: '2026-07-27'
+  note: >-
+    Proves the layers answer in RFC 7946 GeoJSON even though the FeatureServer
+    root advertises supportedQueryFormats "JSON" only — the layer resources
+    advertise "JSON, geoJSON, PBF" and the geojson response was verified live.
+- file: enmax-load-capacity-query-response.json
+  title: Feeder load capacity feature query (Esri JSON)
+  request: >-
+    GET /Feeder_Load_Capacity_Rev9_20251211/FeatureServer/0/query?where=1%3D1&outFields=*&returnGeometry=false&resultRecordCount=3&f=json
+  status: 200
+  content_type: application/json
+  fetched: '2026-07-27'
+  note: >-
+    Three rows of estimated remaining load capacity as of December 2025, showing
+    the FEEDERID / Capacity_Available band / KVA_Number attribute shape.
+- file: enmax-service-area-query-response.json
+  title: ENMAX service area boundary query (Esri JSON)
+  request: >-
+    GET /ENMAX_Service_Area_for_LAF_Verification/FeatureServer/0/query?where=1%3D1&outFields=*&returnGeometry=false&f=json
+  status: 200
+  content_type: application/json
+  fetched: '2026-07-27'
+  note: >-
+    All three boundary polygons — outside the ENMAX service area, inside it
+    excluding downtown, and inside the downtown network boundary — each carrying
+    the enmax.com URL a developer is directed to for that zone.
+- file: enmax-error-invalid-field-response.json
+  title: Error response for an invalid query field
+  request: >-
+    GET /Generation_Capacity_Layers_20250219_PUBLIC/FeatureServer/1/query?where=BOGUSFIELD%3D1&outFields=*&f=json
+  status: 200
+  content_type: application/json
+  fetched: '2026-07-27'
+  note: >-
+    Returned with HTTP status 200 and an error object in the body — the Esri
+    ArcGIS REST convention. See errors/enmax-problem-types.yml.
+caveats:
+- >-
+  These are ENMAX Power's data but Esri's platform interface. ENMAX documents
+  none of these requests and never describes the endpoints as an API.
+- >-
+  The service path segments are date-stamped and have already rolled
+  (Feeder_Load_Capacity_Rev8_20240731 is still live alongside
+  Feeder_Load_Capacity_Rev9_20251211), so the URLs in these examples are not a
+  stable contract. See lifecycle/enmax-lifecycle.yml.

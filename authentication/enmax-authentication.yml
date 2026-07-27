@@ -1,0 +1,85 @@
+generated: '2026-07-27'
+method: probed
+source: >-
+  Live anonymous probes of the ENMAX surfaces listed in apis.yml, 2026-07-27.
+  There is no OpenAPI, Swagger or OIDC discovery document anywhere on any ENMAX
+  host, so no securitySchemes could be derived; this profile records what was
+  observed on the wire instead.
+summary:
+  types:
+  - none
+  api_key_in: []
+  oauth2_flows: []
+  public_read: true
+  credential_required_for_published_apis: false
+  standards_based_consent_flow: none
+schemes:
+- name: anonymous
+  type: none
+  applies_to: >-
+    All ENMAX Power system-capacity ArcGIS REST feature services on
+    services1.arcgis.com/NKgP4VcXUzEyOnmg — the FeatureServer metadata
+    documents, the layer resources, and /query.
+  verified: >-
+    HTTP 200 application/json returned with no Authorization header, no token
+    query parameter, no cookie and no API key, on 2026-07-27. Verified against
+    Generation_Capacity_Layers_20250219_PUBLIC, Feeder_Load_Capacity_Rev9_20251211
+    and ENMAX_Service_Area_for_LAF_Verification.
+  cors: >-
+    access-control-allow-origin "*", with access-control-allow-headers
+    "Content-Type, Authorization, X-Esri-Authorization" — browser clients can
+    call these endpoints directly from any origin.
+platform_token_service:
+  note: >-
+    The ArcGIS tenant advertises token-based security for PRIVILEGED operations.
+    This is the Esri platform gate, not a gate on the public read layers above,
+    which were confirmed to answer without a token. Recorded for completeness —
+    ENMAX has published no client id, no registration path and no scopes.
+  source: https://services1.arcgis.com/NKgP4VcXUzEyOnmg/arcgis/rest/info?f=json
+  status: 200
+  isTokenBasedSecurity: true
+  tokenServicesUrl: https://www.arcgis.com/sharing/generateToken
+  owningSystemUrl: https://www.arcgis.com
+  owningTenant: NKgP4VcXUzEyOnmg
+customer_surfaces:
+- name: ENMAX MyAccount (Easymax)
+  url: https://myaccount.enmax.com/
+  status: 200
+  mechanism: >-
+    Session-based web sign-in. Registration at
+    https://myaccount.enmax.com/register requires an ENMAX account number and a
+    phone number. No API is exposed behind it — ENMAX's own support page states
+    the Energy Insights usage view "is view-only within your online account and
+    can't be exported at this time."
+  oauth2: false
+  openid_connect: false
+  third_party_delegation: none
+not_found:
+- path: https://www.enmax.com/.well-known/openid-configuration
+  status: 404
+  checked: '2026-07-27'
+- path: https://www.enmax.com/.well-known/oauth-authorization-server
+  status: 404
+  checked: '2026-07-27'
+- path: https://www.enmax.com/.well-known/security.txt
+  status: 404
+  checked: '2026-07-27'
+- path: https://www.enmax.com/.well-known/api-catalog
+  status: 404
+  checked: '2026-07-27'
+- path: https://www.enmax.com/.well-known/ai-plugin.json
+  status: 404
+  checked: '2026-07-27'
+- path: https://services1.arcgis.com/.well-known/openid-configuration
+  status: 403
+  checked: '2026-07-27'
+  note: Esri edge rejects /.well-known/* at the services host root.
+assessment: >-
+  ENMAX operates the rarest authentication posture in the catalog — none at all
+  on its only published API surface, and no delegation path whatsoever on the
+  customer data it holds. The grid data is open because Esri hosting makes it
+  open, not because ENMAX decided to publish an anonymous read API; the customer
+  usage data is closed because no regulation compels ENMAX to open it and it
+  built no consent surface. There is no OAuth 2.0 authorization endpoint, no
+  OpenID Connect discovery, no client registration, no scopes, no API keys and
+  no accredited-third-party scheme anywhere in the estate.

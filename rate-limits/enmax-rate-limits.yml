@@ -1,0 +1,79 @@
+generated: '2026-07-27'
+method: probed
+source: >-
+  Response headers captured live from an anonymous query against
+  https://services1.arcgis.com/NKgP4VcXUzEyOnmg/arcgis/rest/services/Generation_Capacity_Layers_20250219_PUBLIC/FeatureServer/1/query,
+  2026-07-27. ENMAX publishes no rate limit, quota or fair-use statement
+  anywhere — these limits are signalled by the Esri ArcGIS Online platform the
+  data is hosted on, and they are returned on every response.
+api: enmax:enmax-power-system-capacity-arcgis-feature-services
+provider_documented: false
+published_by: Esri ArcGIS Online (platform), not ENMAX
+signalled_in_headers: true
+
+rate_limits:
+- name: Organization request units per minute
+  header: x-esri-org-request-units-per-min
+  observed_value: usage=9;max=6000
+  limit_count: 6000
+  interval: minute
+  unit: request unit
+  scope: >-
+    The whole ArcGIS Online organization (tenant NKgP4VcXUzEyOnmg), shared
+    across every consumer of every service in it — not per API key and not per
+    caller, because there are no API keys and callers are anonymous. One heavy
+    third-party crawler can therefore consume headroom belonging to ENMAX's own
+    public maps.
+  reset: rolling one-minute window
+  authenticated: false
+- name: Request units charged per query
+  header: x-esri-query-request-units
+  observed_value: '3'
+  unit: request unit
+  scope: per request
+  detail: >-
+    The cost the individual request debited from the per-minute allowance. A
+    2-row query with returnGeometry=false cost 3 units, so the 6000/min ceiling
+    is a real budget rather than a nominal one for geometry-returning or
+    large-page queries.
+
+related_headers:
+- header: x-esri-tiles-basic-query-mode
+  observed_value: 'true'
+- header: x-esri-tiles-basic-query-type
+  observed_value: Basic
+  note: Identifies the metering class the query was billed under.
+
+quotas:
+  published: none
+  detail: >-
+    No daily cap, no monthly cap, no per-IP cap and no fair-use policy is
+    published by ENMAX or discoverable on the service. No 429 response was
+    observed or provoked.
+
+throttling_response:
+  status_code_on_limit: not observed
+  note: >-
+    The limit was not deliberately exceeded. Given that every other error on
+    this surface is returned as HTTP 200 with an error body (see
+    errors/enmax-problem-types.yml), a client should not assume a 429 will be
+    used to signal throttling.
+
+client_guidance:
+- >-
+  Read x-esri-org-request-units-per-min on every response and back off as usage
+  approaches max — it is the only quota feedback available.
+- >-
+  Use returnGeometry=false and a narrow outFields list to keep the per-request
+  unit cost down.
+- >-
+  Respect Cache-Control public, max-age=30 and the ETag; the underlying data
+  changes at most a few times a year (hosting capacity stamped February 2025,
+  load capacity December 2025), so re-polling faster than that spends the shared
+  budget for nothing.
+
+caveats:
+- >-
+  These limits belong to the hosting tenant and can be changed by Esri or by the
+  tenant administrator at any time, with no notice to consumers and no
+  deprecation channel. ENMAX has made no commitment about them.

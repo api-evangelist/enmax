@@ -1,0 +1,178 @@
+generated: '2026-07-27'
+method: probed
+source: >-
+  Live probes of every ENMAX host in apis.yml plus the ArcGIS service and layer
+  metadata documents, 2026-07-27. Cross-checked against review.yml, which
+  established the regulatory position. No compliance claim below was taken from
+  a marketing page — ENMAX publishes no developer-facing compliance statement of
+  any kind.
+api: enmax:enmax-power-system-capacity-arcgis-feature-services
+
+standards:
+- id: arcgis-rest-api
+  name: Esri ArcGIS REST API (hosted feature services)
+  conforms: true
+  evidence: >-
+    services1.arcgis.com/NKgP4VcXUzEyOnmg/arcgis/rest/info?f=json returns
+    currentVersion 12, fullVersion 12.0.0. The full services / FeatureServer /
+    layer / query resource tree responds as specified. This is a vendor platform
+    interface, not an open standard.
+- id: geojson-rfc7946
+  name: GeoJSON (RFC 7946)
+  conforms: true
+  evidence: >-
+    Every layer advertises supportedQueryFormats "JSON, geoJSON, PBF" and a live
+    f=geojson query returned a valid FeatureCollection. Saved verbatim at
+    examples/enmax-hosting-capacity-query-response.geojson.
+- id: ogc-api-features
+  name: OGC API - Features
+  conforms: false
+  evidence: >-
+    Not enabled on any of the three services. Both
+    .../Generation_Capacity_Layers_20250219_PUBLIC/OGCFeatureServer?f=json and
+    .../OGCFeatureServer/api?f=json return {"error":{"code":400,"message":"Invalid
+    URL"}}. Consequence: the platform generates no OpenAPI document either,
+    because that OpenAPI would have been a by-product of the OGC endpoint.
+- id: openapi
+  name: OpenAPI Specification
+  conforms: false
+  evidence: >-
+    No OpenAPI or Swagger document exists on any ENMAX or ENMAX-hosting surface.
+    Probed 2026-07-27 - www.enmax.com/openapi.json 404, www.enmax.com/swagger.json
+    404, services1.arcgis.com/NKgP4VcXUzEyOnmg/openapi.json redirects (302) to
+    the ArcGIS services directory, and outages.enmax.com/openapi.json,
+    /swagger.json, /swagger/v1/swagger.json and /api-docs all return the SPA
+    index shell.
+- id: asyncapi
+  name: AsyncAPI
+  conforms: false
+  evidence: No event, streaming or webhook surface exists to describe.
+- id: graphql
+  name: GraphQL
+  conforms: false
+  evidence: No /graphql endpoint on any ENMAX host.
+- id: mcp
+  name: Model Context Protocol
+  conforms: false
+  evidence: No MCP server published or discoverable.
+- id: green-button-espi
+  name: Green Button / NAESB REQ.21 Energy Services Provider Interface
+  conforms: false
+  evidence: >-
+    No Green Button surface exists. www.enmax.com/green-button and /greenbutton
+    both 404; the phrase appears nowhere in the 301-URL sitemap; no Green Button
+    Alliance certification exists for ENMAX, ENMAX Power, ENMAX Energy or
+    Versant Power. ENMAX is under no obligation to implement it — Alberta has no
+    equivalent to Ontario's O. Reg. 633/21, and Maine imposes none on Versant
+    Power. See review.yml.
+- id: cdr-consumer-data-standards
+  name: Australian Consumer Data Right (energy)
+  conforms: false
+  evidence: Not applicable — no Australian operations.
+- id: ieee-2030-5
+  name: IEEE 2030.5 (Smart Energy Profile 2.0)
+  conforms: false
+  evidence: No reference found on any ENMAX surface.
+- id: openadr
+  name: OpenADR
+  conforms: false
+  evidence: No reference found on any ENMAX surface.
+- id: iec-cim-61968
+  name: IEC 61968 / 61970 Common Information Model
+  conforms: false
+  evidence: >-
+    Not exposed. The public feature-service attribute names (FEEDERID,
+    Phase_Designation, Capacity_Available, KVA_Number) are an internal GIS
+    vocabulary, not CIM classes.
+- id: oauth2
+  name: OAuth 2.0
+  conforms: false
+  evidence: >-
+    No authorization endpoint, no token endpoint, no client registration, no
+    scopes. www.enmax.com/.well-known/oauth-authorization-server returns 404.
+    The published read surface is anonymous.
+- id: openid-connect
+  name: OpenID Connect
+  conforms: false
+  evidence: >-
+    www.enmax.com/.well-known/openid-configuration returns 404. The same path on
+    outages.enmax.com and powerservices.enmax.com returns 200 but serves the
+    React SPA HTML shell, not OIDC JSON.
+- id: rfc9457-problem-details
+  name: RFC 9457 Problem Details for HTTP APIs
+  conforms: false
+  evidence: >-
+    Errors use the Esri envelope {"error":{"code","message","details"}} and are
+    returned with HTTP status 200, not a 4xx. See errors/enmax-problem-types.yml.
+- id: rfc9116-security-txt
+  name: RFC 9116 security.txt
+  conforms: false
+  evidence: >-
+    www.enmax.com/.well-known/security.txt 404, myaccount.enmax.com 404,
+    services1.arcgis.com 403. No security contact is published for
+    vulnerability reporting against these surfaces.
+- id: rfc8594-sunset-header
+  name: RFC 8594 Sunset header
+  conforms: false
+  evidence: >-
+    No Sunset or Deprecation header on any response. Retired service revisions
+    simply vanish from the service directory; the superseded
+    Feeder_Load_Capacity_Rev8_20240731 is still live alongside Rev9 with nothing
+    marking it as superseded.
+- id: http-pagination
+  name: Server-side pagination
+  conforms: true
+  evidence: >-
+    advancedQueryCapabilities.supportsPagination true on every layer;
+    resultOffset / resultRecordCount verified live; maxRecordCount 1000 and
+    exceededTransferLimit signal truncation. See conventions/enmax-conventions.yml.
+- id: idempotency
+  name: Idempotency keys
+  conforms: false
+  evidence: >-
+    No idempotency key contract. Not a gap in practice — the services advertise
+    capabilities "Query" only, so every operation is a safe GET.
+- id: http-caching
+  name: HTTP conditional requests and caching
+  conforms: true
+  evidence: >-
+    Cache-Control public, max-age=30, s-maxage=30 plus ETag and Last-Modified on
+    query responses.
+- id: cors
+  name: Cross-Origin Resource Sharing
+  conforms: true
+  evidence: 'access-control-allow-origin: * — the endpoints are browser-callable from any origin.'
+- id: hsts
+  name: HTTP Strict Transport Security
+  conforms: true
+  evidence: >-
+    services1.arcgis.com max-age=63072000; www.enmax.com max-age=15552000. See
+    security/enmax-domain-security.yml.
+- id: dnssec
+  name: DNSSEC
+  conforms: partial
+  evidence: >-
+    arcgis.com is DNSSEC-signed; enmax.com is not. See
+    security/enmax-domain-security.yml.
+
+published_compliance_program:
+  exists: false
+  detail: >-
+    No trust centre, no SOC 2, ISO 27001, PCI DSS or other certification is
+    published for any ENMAX developer surface; the probe in
+    probe-security-programs.py returned no verified trust-centre or
+    vulnerability-disclosure hit on 2026-07-27. ENMAX is regulated by the
+    Alberta Utilities Commission and Versant Power by the Maine Public Utilities
+    Commission, but that is utility economic regulation and carries no API or
+    data-interface compliance obligation. Deliberately NOT wired as a
+    Compliance pointer in apis.yml — there is nothing published to point at.
+
+data_licence:
+  published: false
+  detail: >-
+    The three ArcGIS items behind the public maps (ENMAX Hosting Capacity Map
+    PUBLIC, ENMAX Load Capacity Web App - PUBLIC, ENMAX Service Area) are all
+    access "public" but carry licenseInfo null and accessInformation null.
+    Verified against the ArcGIS item documents 2026-07-27. The data is open in
+    practice with no licence, no attribution requirement and no terms — which
+    also means no guarantee of continued availability.
