@@ -32,6 +32,17 @@ description: >-
   needs. ENMAX never calls this an API and documents none of it, but it is real,
   it is open, and it is queryable. Wide open on grid data, completely shut on
   customer data.
+deliveryModel:
+  model: saas
+  open_source: false
+  commercial: true
+  callable_host: false
+  label: Hosted service · you call their endpoint
+  confidence: medium
+  source:
+  - pricing
+  generated: '2026-08-28'
+  method: derived
 accessModel:
   pricing: free
   onboarding: none-published
